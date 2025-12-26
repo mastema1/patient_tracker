@@ -17,7 +17,11 @@
               <div class="small text-muted">Updated {{ $c->updated_at->diffForHumans() }}</div>
             </div>
             <div>
-              <a class="btn btn-sm btn-outline-primary" href="{{ route('conversations.show', $c->id) }}">Open</a>
+              @if($user->role === 'patient')
+                <a class="btn btn-sm btn-outline-primary" href="{{ route('patient.conversations.show', $c->id) }}">Open</a>
+              @else
+                <a class="btn btn-sm btn-outline-primary" href="{{ route('conversations.show', $c->id) }}">Open</a>
+              @endif
             </div>
           </div>
         @empty
@@ -32,7 +36,7 @@
       <div class="card-body">
         <h2 class="h6 mb-2">Start a conversation</h2>
         @if($user->role === 'patient')
-          <form method="POST" action="{{ route('conversations.start') }}">
+          <form method="POST" action="{{ route('patient.conversations.start') }}">
             @csrf
             @if($user->doctor_id)
               <input type="hidden" name="doctor_id" value="{{ $user->doctor_id }}">

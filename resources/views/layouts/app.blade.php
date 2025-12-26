@@ -29,12 +29,24 @@
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.history') }}">History</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.profile') }}">Profile</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.support') }}">Support</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('conversations.index') }}">Conversations</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('patient.conversations') }}">Conversations</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('patient.appointments') }}">Appointments</a></li>
           @elseif(auth()->user()->role === 'doctor')
             <li class="nav-item"><a class="nav-link" href="{{ route('doctor.dashboard') }}">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('doctor.patients') }}">Patients</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('doctor.feed') }}">Medical Feed</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('conversations.index') }}">Conversations</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.appointments') }}">Appointments</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Settings</a>
+              <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+                <li><a class="dropdown-item" href="{{ route('doctor.settings.profile') }}">Profile</a></li>
+                <li><a class="dropdown-item" href="{{ route('doctor.settings.facilities') }}">Facilities</a></li>
+              </ul>
+            </li>
+          @elseif(auth()->user()->role === 'admin')
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.support') }}">Support Inbox</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.feedback') }}">Feedback</a></li>
           @endif
         @endauth
       </ul>

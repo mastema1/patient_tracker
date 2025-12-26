@@ -11,6 +11,8 @@ use App\Http\Controllers\DoctorFeedController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\DoctorSettingsController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Auth\Middleware\Authenticate as AuthMiddleware;
 
 Route::get('/', function () {
@@ -53,6 +55,15 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
         // Appointment request to doctor
         Route::post('/doctors/{id}/appointments', [AppointmentController::class, 'patientRequest'])->name('patient.appointments.request');
+
+        // Patient appointments UI
+        Route::get('/patient/appointments', [AppointmentController::class, 'patientIndex'])->name('patient.appointments');
+
+        // Patient conversations alias routes
+        Route::get('/patient/conversations', [ConversationController::class, 'index'])->name('patient.conversations');
+        Route::post('/patient/conversations/start', [ConversationController::class, 'start'])->name('patient.conversations.start');
+        Route::get('/patient/conversations/{id}', [ConversationController::class, 'show'])->name('patient.conversations.show');
+        Route::post('/patient/conversations/{id}/message', [ConversationController::class, 'send'])->name('patient.conversations.message');
     });
 
     // Doctor
@@ -71,6 +82,17 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
         // Doctor to patient appointment request
         Route::post('/doctor/patient/{id}/appointments', [AppointmentController::class, 'doctorRequest'])->name('doctor.appointments.request');
+
+        // Doctor appointments UI
+        Route::get('/doctor/appointments', [AppointmentController::class, 'doctorIndex'])->name('doctor.appointments');
+
+        // Doctor settings and facility management
+        Route::get('/doctor/settings/profile', [DoctorSettingsController::class, 'profile'])->name('doctor.settings.profile');
+        Route::post('/doctor/settings/profile', [DoctorSettingsController::class, 'updateProfile'])->name('doctor.settings.profile.update');
+        Route::get('/doctor/settings/facilities', [DoctorSettingsController::class, 'facilities'])->name('doctor.settings.facilities');
+        Route::post('/doctor/settings/facilities/attach', [DoctorSettingsController::class, 'attachFacility'])->name('doctor.settings.facilities.attach');
+        Route::post('/doctor/settings/facilities/create', [DoctorSettingsController::class, 'createFacility'])->name('doctor.settings.facilities.create');
+        Route::delete('/doctor/settings/facilities/{id}', [DoctorSettingsController::class, 'detachFacility'])->name('doctor.settings.facilities.detach');
     });
 
     // Public doctor profile (both roles)
@@ -85,4 +107,16 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get('/conversations/{id}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/conversations/{id}/message', [ConversationController::class, 'send'])->name('conversations.message');
     Route::get('/messages/{id}/download', [ConversationController::class, 'download'])->name('conversations.download');
+
+    // Appointment updates (both roles; auth)
+    Route::post('/appointments/{id}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+    Route::post('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+
+    // Admin (role:admin)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/support', [AdminController::class, 'supportInbox'])->name('admin.support');
+        Route::post('/admin/support/{id}/status', [AdminController::class, 'updateSupportStatus'])->name('admin.support.update');
+        Route::get('/admin/feedback', [AdminController::class, 'feedback'])->name('admin.feedback');
+        Route::delete('/admin/feedback/{id}', [AdminController::class, 'deleteFeedback'])->name('admin.feedback.delete');
+    });
 });

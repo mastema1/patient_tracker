@@ -10,7 +10,7 @@ class SupportMessage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id','subject','message','is_private'
+        'user_id','subject','message','is_private','status'
     ];
 
     public function user()

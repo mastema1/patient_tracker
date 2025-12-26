@@ -65,6 +65,13 @@
           </div>
           <button class="btn btn-outline-primary btn-sm">Send Request</button>
         </form>
+        <hr>
+        <h2 class="h6 mb-2">Message Patient</h2>
+        <form method="POST" action="{{ route('conversations.start') }}">
+          @csrf
+          <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+          <button class="btn btn-secondary btn-sm">Open Conversation</button>
+        </form>
       </div>
     </div>
   </div>
