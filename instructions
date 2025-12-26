@@ -1,0 +1,60 @@
+Neurological Remote Monitoring Platform — Setup & Overview
+
+Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- Optional: WAMP/XAMPP (Apache) if not using artisan serve
+
+Database setup
+- Default: SQLite (already configured in .env)
+  - No extra setup needed; migrations will create tables in database/database.sqlite
+- Optional: MySQL
+  - Update .env with DB_CONNECTION=mysql and credentials, then run migrations
+  - Or import schema directly: mysql -u root -p < schema.sql
+
+Install & build
+- composer install
+- cp .env.example .env (if not present)
+- php artisan key:generate
+- php artisan migrate
+- npm install
+- npm run build (or npm run dev for Vite)
+
+Run the web app (development)
+- php artisan serve
+- Open http://127.0.0.1:8000
+- If using WAMP/Apache: point DocumentRoot to /public (e.g., http://localhost/dergawi/public)
+
+Configuration
+- File uploads are stored privately under storage/app/medical_files
+- Ensure storage/ is writable (php artisan storage:link is not required for private downloads)
+
+Feature overview
+- Authentication
+  - Secure login/signup for roles: patient and doctor (passwords stored as hashes, PDO prepared statements).
+- Patient interface
+  - Dashboard: summary of recent seizure logs and uploaded files.
+  - Seizure Diary: log date, time, duration (seconds), and notes.
+  - File Uploads: upload EEG-related files (.edf, .csv, .pdf). Allowed types are validated; files stored outside execution path; paths saved in DB.
+- Doctor interface
+  - Patient List: overview of assigned patients.
+  - Clinical Review: time-series chart (Chart.js) showing seizure frequency over the last 30 days for a selected patient.
+  - Files: view and download patient-uploaded medical files.
+
+Pages and routes (planned)
+- /login — login form
+- /register — signup form (role selection: patient/doctor)
+- /patient/dashboard — patient overview
+- /patient/seizures/new — add seizure entry
+- /patient/seizures — list of logs
+- /patient/files — upload & manage files
+- /doctor/dashboard — doctor overview
+- /doctor/patients — list of patients
+- /doctor/patient/{id} — clinical review with Chart.js and file access
+
+UI/Visuals
+- Bootstrap 5 (or Tailwind, based on preference), medical palette (white, soft blues, grays).
+
+Notes
+- This file lists how to run the app and describes features/pages. The application code is implemented in Laravel with controllers, models, views, and routes under app/, database/, and resources/.
