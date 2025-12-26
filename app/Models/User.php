@@ -23,6 +23,11 @@ class User extends Authenticatable
         'password',
         'role',
         'doctor_id',
+        'phone',
+        'address',
+        'specialty',
+        'bio',
+        'case_categories',
     ];
 
     /**
@@ -66,5 +71,55 @@ class User extends Authenticatable
     public function medicalFiles()
     {
         return $this->hasMany(MedicalFile::class, 'patient_id');
+    }
+
+    public function facilities()
+    {
+        return $this->belongsToMany(Facility::class, 'doctor_facility', 'doctor_id', 'facility_id');
+    }
+
+    public function hospitalizations()
+    {
+        return $this->hasMany(Hospitalization::class, 'patient_id');
+    }
+
+    public function clinicalNotesAuthored()
+    {
+        return $this->hasMany(ClinicalNote::class, 'doctor_id');
+    }
+
+    public function clinicalNotesAbout()
+    {
+        return $this->hasMany(ClinicalNote::class, 'patient_id');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'doctor_id');
+    }
+
+    public function postComments()
+    {
+        return $this->hasMany(PostComment::class, 'doctor_id');
+    }
+
+    public function appointmentsAsDoctor()
+    {
+        return $this->hasMany(Appointment::class, 'doctor_id');
+    }
+
+    public function appointmentsAsPatient()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function conversationsAsDoctor()
+    {
+        return $this->hasMany(Conversation::class, 'doctor_id');
+    }
+
+    public function conversationsAsPatient()
+    {
+        return $this->hasMany(Conversation::class, 'patient_id');
     }
 }

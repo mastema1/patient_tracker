@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\ClinicalNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,6 +48,7 @@ class DoctorController extends Controller
         }
 
         $series = array_values($counts);
+        $notes = ClinicalNote::where('doctor_id', $doctor->id)->where('patient_id', $patient->id)->latest()->paginate(10);
         $files = $patient->medicalFiles()->orderBy('upload_date','desc')->get();
 
         return view('doctor.patient_review', [
@@ -54,6 +56,23 @@ class DoctorController extends Controller
             'labels' => $labels,
             'series' => $series,
             'files' => $files,
+            'notes' => $notes,
         ]);
+    }
+
+    public function storeClinicalNote(Request $request, $id)
+    {
+        $doctor = Auth::user();
+        abort_unless($doctor && $doctor->role === 'doctor', 403);
+        $patient = User::where('id', $id)->where('role','patient')->where('doctor_id', $doctor->id)->firstOrFail();
+        $data = $request->validate([
+            'content' => ['required','string','max:5000'],
+        ]);
+        ClinicalNote::create([
+            'doctor_id' => $doctor->id,
+            'patient_id' => $patient->id,
+            'content' => $data['content'],
+        ]);
+        return back()->with('status','Clinical note added.');
     }
 }

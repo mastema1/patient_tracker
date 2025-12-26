@@ -26,12 +26,24 @@
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.dashboard') }}">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.seizures') }}">Seizures</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('patient.files') }}">Files</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('patient.history') }}">History</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('patient.profile') }}">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('patient.support') }}">Support</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('conversations.index') }}">Conversations</a></li>
           @elseif(auth()->user()->role === 'doctor')
             <li class="nav-item"><a class="nav-link" href="{{ route('doctor.dashboard') }}">Dashboard</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ route('doctor.patients') }}">Patients</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.feed') }}">Medical Feed</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('conversations.index') }}">Conversations</a></li>
           @endif
         @endauth
       </ul>
+      @auth
+      <form class="d-flex me-3" role="search" method="GET" action="{{ route('search') }}">
+        <input class="form-control me-2" type="search" name="q" value="{{ request('q') }}" placeholder="Search doctors or facilities" aria-label="Search">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+      @endauth
       <ul class="navbar-nav ms-auto">
         @auth
           <li class="nav-item me-2 align-self-center">{{ auth()->user()->name }}</li>

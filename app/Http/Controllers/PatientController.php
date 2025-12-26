@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\SeizureLog;
 use App\Models\MedicalFile;
+use App\Models\Hospitalization;
+use App\Models\SupportMessage;
+use App\Models\FeedbackComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -82,5 +85,80 @@ class PatientController extends Controller
         ]);
 
         return back()->with('status','File uploaded.');
+    }
+
+    public function history()
+    {
+        $user = Auth::user();
+        $hospitalizations = Hospitalization::with('facility')
+            ->where('patient_id', $user->id)
+            ->orderBy('start_date','desc')
+            ->paginate(10);
+        return view('patient.history', compact('hospitalizations'));
+    }
+
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('patient.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        $data = $request->validate([
+            'name' => ['required','string','max:100'],
+            'email' => ['required','email','max:255','unique:users,email,'.$user->id],
+            'phone' => ['nullable','string','max:50'],
+            'address' => ['nullable','string','max:255'],
+            'password' => ['nullable','confirmed','min:8'],
+        ]);
+        if (!empty($data['password'])) {
+            $user->password = bcrypt($data['password']);
+        }
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->phone = $data['phone'] ?? null;
+        $user->address = $data['address'] ?? null;
+        $user->save();
+        return back()->with('status','Profile updated.');
+    }
+
+    public function support()
+    {
+        $user = Auth::user();
+        $publicFeedback = FeedbackComment::where('visibility','public')->latest()->paginate(5);
+        $myPrivate = FeedbackComment::where('visibility','private')->where('user_id',$user->id)->latest()->paginate(5, ['*'], 'priv_page');
+        return view('patient.support', compact('publicFeedback','myPrivate'));
+    }
+
+    public function submitSupport(Request $request)
+    {
+        $data = $request->validate([
+            'subject' => ['required','string','max:200'],
+            'message' => ['required','string','max:5000'],
+            'is_private' => ['nullable','boolean'],
+        ]);
+        SupportMessage::create([
+            'user_id' => Auth::id(),
+            'subject' => $data['subject'],
+            'message' => $data['message'],
+            'is_private' => $request->boolean('is_private', true),
+        ]);
+        return back()->with('status','Support message sent.');
+    }
+
+    public function submitFeedback(Request $request)
+    {
+        $data = $request->validate([
+            'visibility' => ['required','in:public,private'],
+            'content' => ['required','string','max:2000'],
+        ]);
+        FeedbackComment::create([
+            'user_id' => Auth::id(),
+            'visibility' => $data['visibility'],
+            'content' => $data['content'],
+        ]);
+        return back()->with('status','Feedback posted.');
     }
 }

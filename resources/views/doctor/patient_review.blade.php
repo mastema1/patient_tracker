@@ -26,6 +26,49 @@
     </table>
   </div>
 </div>
+
+<div class="row g-3 mt-3">
+  <div class="col-md-7">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Clinical Notes</h2>
+        <form method="POST" action="{{ route('doctor.patient.notes.store', $patient->id) }}" class="mb-3">
+          @csrf
+          <div class="mb-2">
+            <textarea name="content" class="form-control" rows="3" placeholder="Add a clinical note..." required></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm">Add Note</button>
+        </form>
+        @foreach($notes as $note)
+          <div class="border rounded p-2 mb-2">
+            <div class="small text-muted">{{ $note->created_at->format('Y-m-d H:i') }}</div>
+            <div>{{ $note->content }}</div>
+          </div>
+        @endforeach
+        {{ $notes->links() }}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Follow-up Appointment Request</h2>
+        <form method="POST" action="{{ route('doctor.appointments.request', $patient->id) }}">
+          @csrf
+          <div class="mb-2">
+            <label class="form-label">Suggested date/time</label>
+            <input type="datetime-local" class="form-control" name="scheduled_at">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Reason</label>
+            <textarea class="form-control" name="reason" rows="2" placeholder="Optional"></textarea>
+          </div>
+          <button class="btn btn-outline-primary btn-sm">Send Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('scripts')
