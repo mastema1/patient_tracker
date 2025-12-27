@@ -17,9 +17,18 @@ use Illuminate\Auth\Middleware\Authenticate as AuthMiddleware;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return Auth::user()->role === 'doctor'
-            ? redirect()->route('doctor.dashboard')
-            : redirect()->route('patient.dashboard');
+        $user = Auth::user();
+        if ($user->role === 'doctor') {
+            return redirect()->route('doctor.dashboard');
+        }
+        if ($user->role === 'patient') {
+            return redirect()->route('patient.dashboard');
+        }
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.support');
+        }
+        // Unknown role: take to login
+        return redirect()->route('login');
     }
     return redirect()->route('login');
 });

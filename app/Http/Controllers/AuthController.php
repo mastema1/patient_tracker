@@ -12,7 +12,12 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return $this->redirectByRole(Auth::user());
+            $user = Auth::user();
+            if (in_array($user->role, ['doctor','patient','admin'])) {
+                return $this->redirectByRole($user);
+            }
+            // Unknown role -> force logout and show login form
+            Auth::logout();
         }
         return view('auth.login');
     }
@@ -26,7 +31,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return $this->redirectByRole(Auth::user());
+            $user = Auth::user();
+            if (!in_array($user->role, ['doctor','patient','admin'])) {
+                // Unknown role, log out and show error
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->withErrors(['email' => 'Your account role is not enabled.'])->withInput();
+            }
+            return $this->redirectByRole($user);
         }
 
         return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
@@ -84,6 +97,13 @@ class AuthController extends Controller
         if ($user->role === 'doctor') {
             return redirect()->route('doctor.dashboard');
         }
-        return redirect()->route('patient.dashboard');
+        if ($user->role === 'patient') {
+            return redirect()->route('patient.dashboard');
+        }
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.support');
+        }
+        // Unknown role -> back to login
+        return redirect()->route('login');
     }
 }

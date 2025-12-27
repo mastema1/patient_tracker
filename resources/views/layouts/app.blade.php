@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NeuroMon</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f8fafc; }
-    .navbar { background-color: #e2ecf7; }
-    .card { border-color: #e5e7eb; }
-    .brand { color: #0f172a; font-weight: 600; }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg mb-4">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
   <div class="container">
-    <a class="navbar-brand brand" href="/">NeuroMon</a>
+    <a class="navbar-brand" href="/"><i class="fa-solid fa-brain me-2"></i>NeuroMon</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -23,50 +22,60 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         @auth
           @if(auth()->user()->role === 'patient')
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.dashboard') }}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.seizures') }}">Seizures</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.files') }}">Files</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.history') }}">History</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.profile') }}">Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.support') }}">Support</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.conversations') }}">Conversations</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('patient.appointments') }}">Appointments</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.dashboard') ? 'active' : '' }}" href="{{ route('patient.dashboard') }}"><i class="fa-solid fa-gauge-high me-1"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.seizures*') ? 'active' : '' }}" href="{{ route('patient.seizures') }}"><i class="fa-solid fa-bolt me-1"></i>Seizures</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.files') ? 'active' : '' }}" href="{{ route('patient.files') }}"><i class="fa-solid fa-folder-open me-1"></i>Files</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.history') ? 'active' : '' }}" href="{{ route('patient.history') }}"><i class="fa-solid fa-clock-rotate-left me-1"></i>History</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.profile*') ? 'active' : '' }}" href="{{ route('patient.profile') }}"><i class="fa-solid fa-user me-1"></i>Profile</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.support') ? 'active' : '' }}" href="{{ route('patient.support') }}"><i class="fa-solid fa-life-ring me-1"></i>Support</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.conversations*') ? 'active' : '' }}" href="{{ route('patient.conversations') }}"><i class="fa-solid fa-comments me-1"></i>Conversations</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.appointments') ? 'active' : '' }}" href="{{ route('patient.appointments') }}"><i class="fa-solid fa-calendar-check me-1"></i>Appointments</a></li>
           @elseif(auth()->user()->role === 'doctor')
-            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.dashboard') }}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.patients') }}">Patients</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.feed') }}">Medical Feed</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('conversations.index') }}">Conversations</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('doctor.appointments') }}">Appointments</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('doctor.dashboard') ? 'active' : '' }}" href="{{ route('doctor.dashboard') }}"><i class="fa-solid fa-gauge me-1"></i>Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('doctor.patients') ? 'active' : '' }}" href="{{ route('doctor.patients') }}"><i class="fa-solid fa-users me-1"></i>Patients</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('doctor.feed') ? 'active' : '' }}" href="{{ route('doctor.feed') }}"><i class="fa-solid fa-notes-medical me-1"></i>Medical Feed</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('conversations.*') ? 'active' : '' }}" href="{{ route('conversations.index') }}"><i class="fa-solid fa-comments me-1"></i>Conversations</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('doctor.appointments') ? 'active' : '' }}" href="{{ route('doctor.appointments') }}"><i class="fa-solid fa-calendar-check me-1"></i>Appointments</a></li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Settings</a>
               <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
-                <li><a class="dropdown-item" href="{{ route('doctor.settings.profile') }}">Profile</a></li>
-                <li><a class="dropdown-item" href="{{ route('doctor.settings.facilities') }}">Facilities</a></li>
+                <li><a class="dropdown-item" href="{{ route('doctor.settings.profile') }}"><i class="fa-solid fa-user-gear me-2"></i>Profile</a></li>
+                <li><a class="dropdown-item" href="{{ route('doctor.settings.facilities') }}"><i class="fa-solid fa-hospital-user me-2"></i>Facilities</a></li>
               </ul>
             </li>
           @elseif(auth()->user()->role === 'admin')
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.support') }}">Support Inbox</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('admin.feedback') }}">Feedback</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.support') ? 'active' : '' }}" href="{{ route('admin.support') }}"><i class="fa-solid fa-inbox me-1"></i>Support Inbox</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.feedback') ? 'active' : '' }}" href="{{ route('admin.feedback') }}"><i class="fa-solid fa-comments me-1"></i>Feedback</a></li>
           @endif
         @endauth
       </ul>
       @auth
-      <form class="d-flex me-3" role="search" method="GET" action="{{ route('search') }}">
-        <input class="form-control me-2" type="search" name="q" value="{{ request('q') }}" placeholder="Search doctors or facilities" aria-label="Search">
-        <button class="btn btn-outline-primary" type="submit">Search</button>
+      <form id="global-search-form" class="me-3 search-wrap" role="search" method="GET" action="{{ route('search') }}">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input id="global-search" class="form-control search-input" type="search" name="q" value="{{ request('q') }}" placeholder="Search doctors or facilities" aria-label="Search" autocomplete="off">
+        <div id="search-suggest" class="search-suggest"></div>
       </form>
       @endauth
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item me-3 align-self-center">
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+            <span class="toggle-track">
+              <span class="toggle-thumb"></span>
+              <i class="fa-solid fa-sun icon-sun"></i>
+              <i class="fa-solid fa-moon icon-moon"></i>
+            </span>
+          </button>
+        </li>
         @auth
-          <li class="nav-item me-2 align-self-center">{{ auth()->user()->name }}</li>
+          <li class="nav-item me-2 align-self-center"><i class="fa-solid fa-circle-user me-1"></i>{{ auth()->user()->name }}</li>
           <li class="nav-item">
             <form method="POST" action="{{ route('logout') }}">
               @csrf
-              <button class="btn btn-outline-secondary">Logout</button>
+              <button class="btn btn-outline-secondary"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</button>
             </form>
           </li>
         @else
-          <li class="nav-item"><a class="btn btn-primary" href="{{ route('login') }}">Login</a></li>
+          <li class="nav-item"><a class="btn btn-primary" href="{{ route('login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i>Login</a></li>
         @endauth
       </ul>
     </div>
@@ -88,6 +97,7 @@
   @yield('content')
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/ui.js" defer></script>
 @yield('scripts')
 </body>
 </html>
