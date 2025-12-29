@@ -123,6 +123,11 @@ Route::middleware([AuthMiddleware::class])->group(function () {
 
     // Admin (role:admin)
     Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/admin/doctors/{id}/approve', [AdminController::class, 'approveDoctor'])->name('admin.doctors.approve');
+        Route::post('/admin/doctors/{id}/reject', [AdminController::class, 'rejectDoctor'])->name('admin.doctors.reject');
+        Route::get('/admin/doctors/{id}/certificate', [AdminController::class, 'downloadCertificate'])->name('admin.doctors.certificate');
+
         Route::get('/admin/support', [AdminController::class, 'supportInbox'])->name('admin.support');
         Route::post('/admin/support/{id}/status', [AdminController::class, 'updateSupportStatus'])->name('admin.support.update');
         Route::get('/admin/feedback', [AdminController::class, 'feedback'])->name('admin.feedback');

@@ -26,7 +26,7 @@
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.seizures*') ? 'active' : '' }}" href="{{ route('patient.seizures') }}"><i class="fa-solid fa-bolt me-1"></i>Seizures</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.files') ? 'active' : '' }}" href="{{ route('patient.files') }}"><i class="fa-solid fa-folder-open me-1"></i>Files</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.history') ? 'active' : '' }}" href="{{ route('patient.history') }}"><i class="fa-solid fa-clock-rotate-left me-1"></i>History</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.profile*') ? 'active' : '' }}" href="{{ route('patient.profile') }}"><i class="fa-solid fa-user me-1"></i>Profile</a></li>
+            
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.support') ? 'active' : '' }}" href="{{ route('patient.support') }}"><i class="fa-solid fa-life-ring me-1"></i>Support</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.conversations*') ? 'active' : '' }}" href="{{ route('patient.conversations') }}"><i class="fa-solid fa-comments me-1"></i>Conversations</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('patient.appointments') ? 'active' : '' }}" href="{{ route('patient.appointments') }}"><i class="fa-solid fa-calendar-check me-1"></i>Appointments</a></li>
@@ -44,6 +44,7 @@
               </ul>
             </li>
           @elseif(auth()->user()->role === 'admin')
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}"><i class="fa-solid fa-user-check me-1"></i>Verification</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.support') ? 'active' : '' }}" href="{{ route('admin.support') }}"><i class="fa-solid fa-inbox me-1"></i>Support Inbox</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.feedback') ? 'active' : '' }}" href="{{ route('admin.feedback') }}"><i class="fa-solid fa-comments me-1"></i>Feedback</a></li>
           @endif
@@ -67,12 +68,34 @@
           </button>
         </li>
         @auth
-          <li class="nav-item me-2 align-self-center"><i class="fa-solid fa-circle-user me-1"></i>{{ auth()->user()->name }}</li>
-          <li class="nav-item">
-            <form method="POST" action="{{ route('logout') }}">
-              @csrf
-              <button class="btn btn-outline-secondary"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</button>
-            </form>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-circle-user me-2 fs-5"></i>
+              <span>{{ auth()->user()->name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li class="px-3 py-2">
+                <div class="d-flex align-items-center">
+                  <i class="fa-solid fa-user-circle me-2 fs-3"></i>
+                  <div>
+                    <div class="fw-semibold">{{ auth()->user()->name }}</div>
+                    <div class="text-muted small">{{ auth()->user()->email }}</div>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              @if(auth()->user()->role === 'patient')
+                <li><a class="dropdown-item" href="{{ route('patient.profile') }}"><i class="fa-solid fa-user-gear me-2"></i>Manage Account</a></li>
+              @elseif(auth()->user()->role === 'doctor')
+                <li><a class="dropdown-item" href="{{ route('doctor.settings.profile') }}"><i class="fa-solid fa-user-gear me-2"></i>Manage Account</a></li>
+              @endif
+              <li>
+                <form method="POST" action="{{ route('logout') }}" class="px-3 py-1">
+                  @csrf
+                  <button class="btn btn-outline-secondary w-100"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</button>
+                </form>
+              </li>
+            </ul>
           </li>
         @else
           <li class="nav-item"><a class="btn btn-primary" href="{{ route('login') }}"><i class="fa-solid fa-right-to-bracket me-1"></i>Login</a></li>

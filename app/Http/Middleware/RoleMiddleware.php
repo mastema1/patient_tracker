@@ -14,6 +14,11 @@ class RoleMiddleware
         if (!Auth::check() || Auth::user()->role !== $role) {
             abort(403);
         }
+        // Block non-active accounts from protected areas
+        $user = Auth::user();
+        if (isset($user->status) && $user->status !== 'active') {
+            abort(403);
+        }
         return $next($request);
     }
 }

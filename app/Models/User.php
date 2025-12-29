@@ -28,6 +28,8 @@ class User extends Authenticatable
         'specialty',
         'bio',
         'case_categories',
+        'status',
+        'certificate_path',
     ];
 
     /**

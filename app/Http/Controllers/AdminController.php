@@ -4,11 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\SupportMessage;
 use App\Models\FeedbackComment;
+use App\Models\User;
 
 class AdminController extends Controller
 {
+    public function dashboard()
+    {
+        $admin = Auth::user();
+        abort_unless($admin && $admin->role === 'admin', 403);
+        $pending = User::where('role','doctor')->where('status','pending')->orderBy('created_at')->paginate(20);
+        return view('admin.dashboard', compact('pending'));
+    }
+
     public function supportInbox(Request $request)
     {
         $admin = Auth::user();
@@ -55,5 +65,37 @@ class AdminController extends Controller
         $fb = FeedbackComment::findOrFail($id);
         $fb->delete();
         return back()->with('status','Feedback removed.');
+    }
+
+    public function approveDoctor(int $id)
+    {
+        $admin = Auth::user();
+        abort_unless($admin && $admin->role === 'admin', 403);
+        $doctor = User::where('id',$id)->where('role','doctor')->firstOrFail();
+        $doctor->status = 'active';
+        $doctor->save();
+        return back()->with('status','Doctor approved.');
+    }
+
+    public function rejectDoctor(int $id)
+    {
+        $admin = Auth::user();
+        abort_unless($admin && $admin->role === 'admin', 403);
+        $doctor = User::where('id',$id)->where('role','doctor')->firstOrFail();
+        $doctor->status = 'rejected';
+        $doctor->save();
+        return back()->with('status','Doctor rejected.');
+    }
+
+    public function downloadCertificate(int $id)
+    {
+        $admin = Auth::user();
+        abort_unless($admin && $admin->role === 'admin', 403);
+        $doctor = User::where('id',$id)->where('role','doctor')->firstOrFail();
+        if (!$doctor->certificate_path) {
+            abort(404);
+        }
+        $basename = basename($doctor->certificate_path);
+        return Storage::download($doctor->certificate_path, $basename);
     }
 }

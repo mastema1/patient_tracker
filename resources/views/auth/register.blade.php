@@ -6,7 +6,7 @@
     <div class="card shadow-sm">
       <div class="card-body">
         <h1 class="h4 mb-3">Register</h1>
-        <form method="POST" action="{{ route('register.post') }}">
+        <form method="POST" action="{{ route('register.post') }}" enctype="multipart/form-data">
           @csrf
           <div class="row g-3">
             <div class="col-md-6">
@@ -41,6 +41,11 @@
                 @endforeach
               </select>
             </div>
+            <div class="col-md-6" id="doctorCertificate">
+              <label class="form-label">Medical Certificate/License Scan</label>
+              <input type="file" class="form-control" name="certificate" accept=".pdf,.jpg,.jpeg,.png,.webp">
+              <div class="form-text">Required for doctors. PDF or image, max 5MB.</div>
+            </div>
           </div>
           <div class="mt-3">
             <button class="btn btn-primary">Create Account</button>
@@ -59,6 +64,8 @@
     const role = document.getElementById('role').value;
     const el = document.getElementById('doctorSelect');
     el.style.display = role === 'patient' ? 'block' : 'none';
+    const certEl = document.getElementById('doctorCertificate');
+    certEl.style.display = role === 'doctor' ? 'block' : 'none';
   }
   document.getElementById('role').addEventListener('change', toggleDoctor);
   toggleDoctor();
